@@ -5,6 +5,7 @@
  */
 package servlets;
 
+import configuracao.HibernateUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Cliente;
 import models.User;
+import services.ClienteService;
 import services.LoginService;
 
 /**
@@ -62,7 +64,7 @@ public class Controller extends HttpServlet {
                 forward = login(request);
                 break;
             case "incluir":
-                forward = incluir(request);
+                forward = incluirCliente(request);
         }
        
         
@@ -79,30 +81,32 @@ public class Controller extends HttpServlet {
         LoginService ls = new LoginService();
         
         if  (ls.authenticate(usuario, senha)){ 
-            request.setAttribute("clientes", Cliente.getClientes());
-            forward = CLIENTES;
+            forward = carregarClientes(request);
         } else {
             forward = LOGIN;
             request.setAttribute("erro", "erros encontrados");
         }
+            
         return forward;
     }
     
-    private String incluir(HttpServletRequest request){
+    private String incluirCliente(HttpServletRequest request){
         
-        List<Cliente> clientes = Cliente.getClientes();
-        Cliente c = clientes.get( clientes.size() - 1);
+        Cliente cliente = new Cliente();
+        cliente.setCpf(request.getParameter("cpf"));
+        cliente.setNome(request.getParameter("nome"));
         
-        Cliente cliente = new Cliente( c.getId() + 1,
-                request.getParameter("nome"), 
-                request.getParameter("cpf"));
+        ClienteService.incluir( cliente );
         
-        clientes.add( cliente);
-        request.setAttribute("sucesso", "sucesso");
-  
-        return INCLUI_CLIENTE;
+        return carregarClientes(request);
     }
 
+    private String carregarClientes(HttpServletRequest request){
+        
+        List<Cliente> clientes = ClienteService.obtemClientes();
+        request.setAttribute("clientes", clientes);
+        return CLIENTES;
+    }
     /**
      * Returns a short description of the servlet.
      *

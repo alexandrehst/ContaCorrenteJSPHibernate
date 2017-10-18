@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="col-6">
-                    <c:if test="${sucesso != null}">
+                    <c:if test="${sucesso}">
                         <div class="alert alert-success" role="alert">
                             Cliente incluído com sucesso.
                         </div>
@@ -28,7 +28,7 @@
                     <form action="controller" method="post" style="display:block;">
                         <div class="form-group">
                             <label>CPF:</label>
-                            <input type="text" name="cfp" placeholder="Digite o CPF" class="form-control">
+                            <input type="text" name="cpf" placeholder="Digite o CPF" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>Nome:</label>
